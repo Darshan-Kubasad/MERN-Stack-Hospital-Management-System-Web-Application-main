@@ -212,9 +212,13 @@ export const getUserDetails = catchAsyncErrors(async (req, res, next) => {
 
 /* ================= LOGOUT ADMIN ================= */
 export const logoutAdmin = catchAsyncErrors(async (req, res, next) => {
+  const isProd = process.env.NODE_ENV === 'production';
   res.status(201).cookie("adminToken", "", {
     httpOnly: true,
     expires: new Date(Date.now()),
+    sameSite: isProd ? 'None' : 'Lax',
+    secure: isProd,
+    path: '/',
   }).json({
     success: true,
     message: "Admin Logged Out Successfully.",
@@ -223,9 +227,13 @@ export const logoutAdmin = catchAsyncErrors(async (req, res, next) => {
 
 /* ================= LOGOUT PATIENT ================= */
 export const logoutPatient = catchAsyncErrors(async (req, res, next) => {
+  const isProd = process.env.NODE_ENV === 'production';
   res.status(201).cookie("patientToken", "", {
     httpOnly: true,
     expires: new Date(Date.now()),
+    sameSite: isProd ? 'None' : 'Lax',
+    secure: isProd,
+    path: '/',
   }).json({
     success: true,
     message: "Patient Logged Out Successfully.",
