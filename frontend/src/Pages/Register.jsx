@@ -23,7 +23,7 @@ const Register = () => {
 
     try {
       const { data } = await axios.post(
-        "http://localhost:5000/api/v1/user/patient/register",
+        "https://cliniiq-backend.onrender.com/api/v1/user/patient/register",
         {
           firstName,
           lastName,

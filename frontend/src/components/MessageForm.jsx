@@ -15,7 +15,7 @@ const MessageForm = () => {
     try {
       await axios
         .post(
-          "http://localhost:5000/api/v1/message/send",
+          "https://cliniiq-backend.onrender.com/api/v1/message/send",
           { firstName, lastName, email, phone, message },
           {
             withCredentials: true,
