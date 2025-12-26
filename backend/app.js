@@ -15,11 +15,17 @@ config({ path: "./config/config.env" });
 // Create Express app
 const app = express();
 
+
 // Allowed frontend URLs
 const allowedOrigins = [
+  'https://cliniiq.netlify.app',
+  'http://localhost:5174',
   process.env.FRONTEND_URL_ONE, // Netlify
   process.env.FRONTEND_URL_TWO, // Local dev
-];
+].filter(Boolean); // Remove any undefined values
+
+// Log allowed origins for debugging
+console.log('Allowed CORS origins:', allowedOrigins);
 
 // ✅ CORS setup
 app.use(
@@ -27,16 +33,26 @@ app.use(
     origin: (origin, callback) => {
       // Allow requests with no origin (like Postman, curl)
       if (!origin) return callback(null, true);
+      
+      // Check if the origin is in the allowed list or a subdomain
+      const isAllowed = allowedOrigins.some(allowedOrigin => {
+        return (
+          origin === allowedOrigin || 
+          (origin.endsWith('.netlify.app') && allowedOrigin.includes('netlify.app'))
+        );
+      });
 
-      if (allowedOrigins.includes(origin)) {
+      if (isAllowed) {
         return callback(null, true);
       }
 
-      // Reject other origins
-      return callback(new Error("Not allowed by CORS"));
+      // Log blocked origins for debugging
+      console.log('Blocked by CORS:', origin);
+      return callback(new Error(`Not allowed by CORS. Origin: ${origin}`));
     },
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
     credentials: true, // Allow cookies
+    allowedHeaders: ['Content-Type', 'Authorization'],
   })
 );
 
