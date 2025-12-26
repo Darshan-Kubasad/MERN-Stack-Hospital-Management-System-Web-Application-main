@@ -9,37 +9,29 @@ import messageRouter from "./router/messageRouter.js";
 import userRouter from "./router/userRouter.js";
 import appointmentRouter from "./router/appointmentRouter.js";
 
-const cors=require("cros");
-app.use(cors());
-
 const app = express();
 config({ path: "./config/config.env" });
 
-// ✅ CORS setup
+// ✅ Allowed origins
 const allowedOrigins = [
-  process.env.FRONTEND_URL_ONE, // Netlify frontend
-  process.env.FRONTEND_URL_TWO, // Local frontend
+  process.env.FRONTEND_URL_ONE,
+  process.env.FRONTEND_URL_TWO,
 ];
 
-app.use(cors({
-  origin: function (origin, callback) {
-    if (!origin) return callback(null, true); // allow requests like Postman or curl
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true); // allowed origin
-    } else {
-      callback(new Error(`CORS policy: Origin ${origin} not allowed`), false);
-    }
-  },
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  credentials: true,
-}));
-
-// Handle preflight requests for all routes
-app.options("*", cors({
-  origin: allowedOrigins,
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-  credentials: true,
-}));
+// ✅ CORS setup
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      return callback(new Error(`CORS policy: Origin ${origin} not allowed`));
+    },
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
 
 // Middleware
 app.use(cookieParser());
@@ -47,10 +39,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // File upload
-app.use(fileUpload({
-  useTempFiles: true,
-  tempFileDir: "/tmp/",
-}));
+app.use(
+  fileUpload({
+    useTempFiles: true,
+    tempFileDir: "/tmp/",
+  })
+);
 
 // Routes
 app.use("/api/v1/message", messageRouter);
