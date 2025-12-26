@@ -5,8 +5,7 @@ import { generateToken } from "../utils/jwtToken.js";
 import cloudinary from "cloudinary";
 
 export const patientRegister = catchAsyncErrors(async (req, res, next) => {
-  const { firstName, lastName, email, phone, dob, gender, password } =
-    req.body;
+  const { firstName, lastName, email, phone, dob, gender, password } = req.body;
   if (
     !firstName ||
     !lastName ||
@@ -40,7 +39,8 @@ export const patientRegister = catchAsyncErrors(async (req, res, next) => {
 
 export const login = catchAsyncErrors(async (req, res, next) => {
   const { email, password, role } = req.body; //confirmPassword
-  if (!email || !password || !role) { //|| !confirmPassword
+  if (!email || !password || !role) {
+    //|| !confirmPassword
     return next(new ErrorHandler("Please Fill Full Form!", 400));
   }
   // if (password !== confirmPassword) {
@@ -195,28 +195,30 @@ export const getUserDetails = catchAsyncErrors(async (req, res, next) => {
 
 // Logout function for dashboard admin
 export const logoutAdmin = catchAsyncErrors(async (req, res, next) => {
-  res
-    .status(201)
-    .cookie("adminToken", "", {
-      httpOnly: true,
-      expires: new Date(Date.now()),
-    })
-    .json({
-      success: true,
-      message: "Admin Logged Out Successfully.",
-    });
+  const isProd = process.env.NODE_ENV === "production";
+  const cookieOptions = {
+    httpOnly: true,
+    sameSite: isProd ? "None" : "Lax",
+    secure: isProd,
+    path: "/",
+  };
+  res.status(201).clearCookie("adminToken", cookieOptions).json({
+    success: true,
+    message: "Admin Logged Out Successfully.",
+  });
 });
 
 // Logout function for frontend patient
 export const logoutPatient = catchAsyncErrors(async (req, res, next) => {
-  res
-    .status(201)
-    .cookie("patientToken", "", {
-      httpOnly: true,
-      expires: new Date(Date.now()),
-    })
-    .json({
-      success: true,
-      message: "Patient Logged Out Successfully.",
-    });
+  const isProd = process.env.NODE_ENV === "production";
+  const cookieOptions = {
+    httpOnly: true,
+    sameSite: isProd ? "None" : "Lax",
+    secure: isProd,
+    path: "/",
+  };
+  res.status(201).clearCookie("patientToken", cookieOptions).json({
+    success: true,
+    message: "Patient Logged Out Successfully.",
+  });
 });
