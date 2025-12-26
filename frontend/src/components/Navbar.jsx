@@ -10,7 +10,7 @@ const Navbar = () => {
   const [show, setShow] = useState(false);
   const { isAuthenticated, setIsAuthenticated } = useContext(Context);
 
-    const API_URL = import.meta.env.VITE_API_URL;
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const handleLogout = async () => {
     await axios
@@ -20,6 +20,7 @@ const Navbar = () => {
       .then((res) => {
         toast.success(res.data.message);
         setIsAuthenticated(false);
+        navigateTo("/");
       })
       .catch((err) => {
         toast.error(err.response.data.message);
@@ -43,7 +44,7 @@ const Navbar = () => {
             <Link to={"/"} onClick={() => setShow(!show)}>
               Home
             </Link>
-            
+
             <span
               onClick={() => {
                 setShow(!show);
