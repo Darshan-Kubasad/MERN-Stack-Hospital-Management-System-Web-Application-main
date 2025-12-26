@@ -101,7 +101,7 @@ const Register = () => {
             required
           />
           <input
-            type="number"
+            type="text"
             placeholder="Mobile Number"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
