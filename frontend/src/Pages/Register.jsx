@@ -5,6 +5,9 @@ import { toast } from "react-toastify";
 import { Context } from "../main";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 
+  const API_URL = import.meta.env.VITE_API_URL;
+
+
 const Register = () => {
   const { isAuthenticated, setIsAuthenticated } = useContext(Context);
 
@@ -23,7 +26,7 @@ const Register = () => {
 
     try {
       const { data } = await axios.post(
-        "https://cliniiq-backend.onrender.com/api/v1/user/patient/register",
+        `${API_URL}/api/v1/user/patient/register`,
         {
           firstName,
           lastName,

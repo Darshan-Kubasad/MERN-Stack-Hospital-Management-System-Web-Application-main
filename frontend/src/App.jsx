@@ -13,6 +13,9 @@ import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { Context } from "./main";
 import Login from "./Pages/Login";
+
+  const API_URL = import.meta.env.VITE_API_URL;
+
 const App = () => {
   const { isAuthenticated, setIsAuthenticated, setUser } =
     useContext(Context);
@@ -21,7 +24,7 @@ const App = () => {
     const fetchUser = async () => {
       try {
         const response = await axios.get(
-          "https://cliniiq-backend.onrender.com/v1/user/patient/me",
+          `${API_URL}/v1/user/patient/me`,
           {
             withCredentials: true,
           }

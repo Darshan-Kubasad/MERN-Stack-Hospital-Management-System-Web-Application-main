@@ -10,9 +10,11 @@ const Navbar = () => {
   const [show, setShow] = useState(false);
   const { isAuthenticated, setIsAuthenticated } = useContext(Context);
 
+    const API_URL = import.meta.env.VITE_API_URL;
+
   const handleLogout = async () => {
     await axios
-      .get("https://cliniiq-backend.onrender.com/v1/user/patient/logout", {
+      .get(`${API_URL}/v1/user/patient/logout`, {
         withCredentials: true,
       })
       .then((res) => {
