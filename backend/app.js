@@ -9,6 +9,7 @@ import messageRouter from "./router/messageRouter.js";
 import userRouter from "./router/userRouter.js";
 import appointmentRouter from "./router/appointmentRouter.js";
 
+const cors=require("cros");
 app.use(cors());
 
 const app = express();
