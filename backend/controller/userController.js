@@ -8,6 +8,8 @@ import cloudinary from "cloudinary";
 /* ================= PATIENT REGISTER ================= */
 export const patientRegister = catchAsyncErrors(async (req, res, next) => {
   const { firstName, lastName, email, phone, dob, gender, password } = req.body;
+  // Normalize inputs
+  const normalizedEmail = typeof email === 'string' ? email.trim().toLowerCase() : email;
 
   if (
     !firstName ||
@@ -21,7 +23,7 @@ export const patientRegister = catchAsyncErrors(async (req, res, next) => {
     return next(new ErrorHandler("Please Fill Full Form!", 400));
   }
 
-  const isRegistered = await User.findOne({ email });
+  const isRegistered = await User.findOne({ email: normalizedEmail });
   if (isRegistered) {
     return next(new ErrorHandler("User already Registered!", 400));
   }
@@ -29,7 +31,7 @@ export const patientRegister = catchAsyncErrors(async (req, res, next) => {
   const user = await User.create({
     firstName,
     lastName,
-    email,
+    email: normalizedEmail,
     phone,
     dob,
     gender,
