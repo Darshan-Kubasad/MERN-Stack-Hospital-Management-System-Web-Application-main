@@ -12,44 +12,52 @@ import appointmentRouter from "./router/appointmentRouter.js";
 const app = express();
 config({ path: "./config/config.env" });
 
-// ✅ CORS setup for local dev + Netlify frontend
-const allowedOrigins = [process.env.FRONTEND_URL_ONE, process.env.FRONTEND_URL_TWO];
-app.use(
-  cors({
-    origin: function (origin, callback) {
-      // allow requests with no origin (like Postman)
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.indexOf(origin) === -1) {
-        const msg = `The CORS policy for this site does not allow access from the specified Origin.`;
-        return callback(new Error(msg), false);
-      }
-      return callback(null, true);
-    },
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    credentials: true,
-  })
-);
+// ✅ CORS setup
+const allowedOrigins = [
+  process.env.FRONTEND_URL_ONE, // Netlify frontend
+  process.env.FRONTEND_URL_TWO, // Local frontend
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    if (!origin) return callback(null, true); // allow requests like Postman or curl
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true); // allowed origin
+    } else {
+      callback(new Error(`CORS policy: Origin ${origin} not allowed`), false);
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true,
+}));
 
 // Handle preflight requests for all routes
-app.options("*", cors({ origin: allowedOrigins, credentials: true }));
+app.options("*", cors({
+  origin: allowedOrigins,
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true,
+}));
 
+// Middleware
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(
-  fileUpload({
-    useTempFiles: true,
-    tempFileDir: "/tmp/",
-  })
-);
+// File upload
+app.use(fileUpload({
+  useTempFiles: true,
+  tempFileDir: "/tmp/",
+}));
 
+// Routes
 app.use("/api/v1/message", messageRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/appointment", appointmentRouter);
 
+// Database
 dbConnection();
 
+// Error handling
 app.use(errorMiddleware);
 
 export default app;
