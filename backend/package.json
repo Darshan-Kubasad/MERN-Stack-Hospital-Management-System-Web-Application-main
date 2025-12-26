@@ -23,6 +23,6 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.17.2",
     "nodemon": "^3.1.10",
-    "validator": "^13.16.0"
+    "validator": "^13.9.0"
   }
 }
