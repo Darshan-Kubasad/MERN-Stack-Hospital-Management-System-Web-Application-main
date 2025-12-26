@@ -12,49 +12,29 @@ import appointmentRouter from "./router/appointmentRouter.js";
 const app = express();
 config({ path: "./config/config.env" });
 
-// ✅ Allowed origins
-const allowedOrigins = [
-  process.env.FRONTEND_URL_ONE,
-  process.env.FRONTEND_URL_TWO,
-];
-
-// ✅ CORS setup
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
-      }
-      return callback(new Error(`CORS policy: Origin ${origin} not allowed`));
-    },
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: [process.env.FRONTEND_URL_ONE, process.env.FRONTEND_URL_TWO],
+    methods: ["GET", "POST", "DELETE", "PUT"],
     credentials: true,
   })
 );
 
-// Middleware
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// File upload
 app.use(
   fileUpload({
     useTempFiles: true,
     tempFileDir: "/tmp/",
   })
 );
-
-// Routes
 app.use("/api/v1/message", messageRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/appointment", appointmentRouter);
 
-// Database
 dbConnection();
 
-// Error handling
 app.use(errorMiddleware);
-
 export default app;
